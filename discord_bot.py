@@ -2,9 +2,6 @@
 import discord
 from discord.ext import commands, tasks
 
-#Import API Request Librarys
-import aiohttp
-
 #Import Built In Python Library
 from datetime import datetime
 from datetime import date
@@ -14,12 +11,17 @@ import configparser
 import json
 import os
 
+import threading
+import asyncio
+from flask import Flask, request
+
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 keys = configparser.ConfigParser()
 keys.read("keys.ini")
 
 client = discord.Client()
+app = Flask(__name__)
 
 intents = discord.Intents.default()
 intents.members = True
@@ -83,5 +85,39 @@ async def on_message(ctx):
 
     await user.send("You are already not subscribed")
 
+@app.route("/send", methods=["POST"])
+def send():
+  message = request.json["message"]
+  try:
+    fails = asyncio.run_coroutine_threadsafe(send_message(message), client.loop).result()
+
+    if fails > 0:
+      return "error"
+    else:
+      return "Finished"
+  except Exception as e:
+    print("Error in coroutine: " + str(e))
+    return "error"
+
+async def send_message(message):
+  subscription_tracker = open(os.path.join(THIS_FOLDER, 'discord_subscription.json'), "r")
+  tracker_json = json.loads(subscription_tracker.read())
+
+  fails = 0
+
+  for item in tracker_json:
+    user = await client.fetch_user(item)
+    try:
+      await user.send(message)
+    except Exception as e:
+      print("Failed to send message to " + str(item) + ": " + str(e))
+      fails = fails + 1
+
+  return fails
+
+def run_flask():
+  app.run(host='0.0.0.0', port=3001)
+
 if __name__ == "__main__":
+  threading.Thread(target=run_flask).start()
   client.run(keys["Discord"]["Token"])

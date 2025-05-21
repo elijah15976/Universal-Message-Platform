@@ -94,5 +94,17 @@ def listen():
         send_text_message(sender_id, "You are already not subscribed")
     return "Done"
 
+@app.route("/send", methods=["POST"])
+def send():
+  message = request.json["message"]
+
+  subscription_tracker = open(os.path.join(THIS_FOLDER, 'messenger_subscription.json'), "r")
+  tracker_json = json.loads(subscription_tracker.read())
+
+  for item in tracker_json:
+    send_text_message(item, message)
+
+  return "Finished"
+
 if __name__ == "__main__":
   app.run(host='0.0.0.0', port=3000)
