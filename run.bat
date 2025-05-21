@@ -1,5 +1,6 @@
 @echo off
 
-python messenger.py
+::start python messenger.py
+python discord_bot.py
 
 pause
