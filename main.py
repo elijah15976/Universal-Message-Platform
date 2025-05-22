@@ -1,5 +1,5 @@
 import configparser
-from flask import Flask, request
+from flask import Flask, request, Response
 import requests
 
 import os
@@ -16,17 +16,17 @@ URL_DISCORD = "http://localhost:3001/send"
 @app.route("/")
 def index():
   file = open(os.path.join(THIS_FOLDER, 'Web UI\\index.html'), "r").read()
-  return file
+  return Response(file, mimetype='text/html')
 
 @app.route("/script.js")
 def scriptjs():
   file = open(os.path.join(THIS_FOLDER, 'Web UI\\script.js'), "r").read()
-  return file
+  return Response(file, mimetype='application/javascript')
 
 @app.route("/style.css")
 def stylecss():
   file = open(os.path.join(THIS_FOLDER, 'Web UI\\style.css'), "r").read()
-  return file
+  return Response(file, mimetype='text/css')
 
 @app.route("/send", methods=["POST"])
 def send():

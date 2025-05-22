@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Universal Message Platform</title>
-    <link rel="stylesheet" href="style.css"/>
+    <link type="text/css" rel="stylesheet" href="style.css">
   </head>
   <body>
     <h1>Send Announcement</h1>
 
-    <textarea id="message" placeholder="Enter Announcement Here"></textarea>
-    <input id="secret" type="text" placeholder="Secret" />
+    <div id="message-area">
+      <textarea id="message" placeholder="Enter Announcement Here"></textarea>
+    </div>
 
-    <button onclick="send()">Send</button>
+    <br>
+
+    <div id="submit-area">
+      <input id="secret" type="text" placeholder="Secret" />
+      <button onclick="send()">SEND</button>
+    </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="script.js"></script>
